@@ -4,6 +4,7 @@ import 'package:bookshelf/navigation/controller.dart';
 import 'package:bookshelf/navigation/routes.dart';
 import 'package:bookshelf/tracing/route_aware.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -65,7 +66,7 @@ class _WelcomeScreenState extends ObservedState<WelcomeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Platform.isAndroid
+  Widget build(BuildContext context) => kIsWeb || Platform.isAndroid
       ? const Scaffold(
           body: WelcomePage(),
         )

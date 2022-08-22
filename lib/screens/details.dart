@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bookshelf/navigation/controller.dart';
 import 'package:bookshelf/utils/confirmation_dialog.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -112,7 +113,7 @@ class _DetailsPageState extends State<DetailsPage> {
             Material(
               child: ListTile(
                 leading: const Icon(Icons.launch),
-                title: Platform.isAndroid
+                title: kIsWeb || Platform.isAndroid
                     ? TextField(
                         onSubmitted: (_) => setState(() => wasChanges = false),
                         onChanged: (_) => setState(() =>
@@ -177,7 +178,7 @@ class DetailsScreen extends StatelessWidget {
         future: book,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Platform.isAndroid
+            return kIsWeb || Platform.isAndroid
                 ? const Scaffold(
                     body: Center(
                       child: CircularProgressIndicator(),
@@ -189,7 +190,7 @@ class DetailsScreen extends StatelessWidget {
                     ),
                   );
           }
-          return Platform.isAndroid
+          return kIsWeb || Platform.isAndroid
               ? Scaffold(
                   appBar: AppBar(title: Text(snapshot.requireData.title)),
                   body: DetailsPage(

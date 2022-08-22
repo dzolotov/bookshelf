@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bookshelf/screens/unknown.dart';
 import 'package:bookshelf/screens/welcome.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
       value: navigationController,
       child: Provider<RouteObserver>.value(
         value: routeObserver,
-        child: Platform.isAndroid
+        child: kIsWeb || Platform.isAndroid
             ? MaterialApp(
                 initialRoute: Routes.welcome,
                 onGenerateRoute: (settings) {

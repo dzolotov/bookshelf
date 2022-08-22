@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bookshelf/navigation/controller.dart';
 import 'package:bookshelf/tracing/route_aware.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -52,7 +53,7 @@ class _BooksPageState extends State<BooksPage> {
         future: books,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Platform.isAndroid
+            return kIsWeb || Platform.isAndroid
                 ? const Scaffold(
                     body: Center(
                       child: CircularProgressIndicator(),
@@ -141,7 +142,7 @@ class _BooksScreenState extends ObservedState<BooksScreen> {
       BooksPage(),
     ]);
 
-    return Platform.isAndroid
+    return kIsWeb || Platform.isAndroid
         ? Scaffold(
             appBar: AppBar(
               title: const Text('BookShelf'),
