@@ -1,14 +1,17 @@
 import 'dart:io';
 
-import 'package:bookshelf/navigation/provider.dart';
+import 'package:bookshelf/screens/books.dart';
+import 'package:bookshelf/screens/details.dart';
+import 'package:bookshelf/screens/welcome.dart';
+import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'navigation/delegate.dart';
-import 'navigation/parser.dart';
+import 'navigation/models.dart';
+import 'navigation/paths.dart';
 
 final logger = Logger();
 
@@ -16,6 +19,26 @@ void main() {
   // setUrlStrategy(PathUrlStrategy());
   runApp(const MyApp());
 }
+
+final goRouter = GoRouter(routes: [
+  GoRoute(
+      name: Paths.welcome,
+      path: '/',
+      builder: (context, state) => const WelcomeScreen()),
+  GoRoute(
+      name: Paths.books,
+      path: '/books',
+      builder: (context, state) => const BooksScreen()),
+  GoRoute(
+    name: Paths.book,
+    path: '/book/:id',
+    builder: (context, state) => DetailsScreen(
+      BookId(
+        int.parse(state.params["id"]!),
+      ),
+    ),
+  ),
+]);
 
 class NavigationStateDTO {
   bool welcome;
@@ -44,17 +67,16 @@ class MyApp extends StatelessWidget {
           ? Builder(
               builder: (context) {
                 return MaterialApp.router(
-                  routerDelegate: BookshelfRouterDelegate(),
-                  routeInformationParser: BooksShelfRouteInformationParser(),
-                  routeInformationProvider: DebugRouteInformationProvider(),
+                  routerDelegate: goRouter.routerDelegate,
+                  routeInformationParser: goRouter.routeInformationParser,
                 );
               },
             )
           : Builder(
               builder: (context) {
                 return CupertinoApp.router(
-                  routerDelegate: BookshelfRouterDelegate(),
-                  routeInformationParser: BooksShelfRouteInformationParser(),
+                  routerDelegate: goRouter.routerDelegate,
+                  routeInformationParser: goRouter.routeInformationParser,
                 );
               },
             ),

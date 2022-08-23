@@ -1,10 +1,11 @@
 import 'dart:io';
 
-import 'package:bookshelf/navigation/delegate.dart';
+import 'package:bookshelf/navigation/paths.dart';
 import 'package:bookshelf/tracing/route_aware.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../domain/data/books.dart';
 import '../domain/models/book.dart';
@@ -69,8 +70,8 @@ class _BooksPageState extends State<BooksPage> {
                 leading: data[index].icon,
                 title: Text(data[index].title),
                 onTap: () {
-                  (Router.of(context).routerDelegate as BookshelfRouterDelegate)
-                      .gotoBook(data[index].id);
+                  GoRouter.of(context).pushNamed(Paths.book,
+                      params: {"id": data[index].id.toString()});
                   // context
                   //     .read<BookshelfRouterDelegate>()
                   //     .gotoBook(data[index].id);
