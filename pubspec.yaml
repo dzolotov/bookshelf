@@ -16,11 +16,14 @@ dependencies:
   provider: ^6.0.0
   cupertino_icons: ^1.0.0
   logger: any
+  auto_route: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.0
+  auto_route_generator: any
+  build_runner: any
 
 flutter:
   uses-material-design: true

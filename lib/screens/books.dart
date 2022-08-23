@@ -1,6 +1,10 @@
 import 'dart:io';
 
+import 'package:auto_route/src/router/auto_router_x.dart';
+import 'package:bookshelf/navigation/autoroute.gr.dart';
 import 'package:bookshelf/navigation/delegate.dart';
+import 'package:bookshelf/navigation/models.dart';
+import 'package:bookshelf/navigation/paths.dart';
 import 'package:bookshelf/tracing/route_aware.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -8,6 +12,7 @@ import 'package:flutter/material.dart';
 
 import '../domain/data/books.dart';
 import '../domain/models/book.dart';
+import '../main.dart';
 
 const useDrawer = false;
 const useAndroidBottomNavBar = false;
@@ -69,8 +74,11 @@ class _BooksPageState extends State<BooksPage> {
                 leading: data[index].icon,
                 title: Text(data[index].title),
                 onTap: () {
-                  (Router.of(context).routerDelegate as BookshelfRouterDelegate)
-                      .gotoBook(data[index].id);
+                  context.router.navigate(
+                    DetailsScreenRoute(
+                      bookId: BookId(data[index].id),
+                    ),
+                  );
                   // context
                   //     .read<BookshelfRouterDelegate>()
                   //     .gotoBook(data[index].id);

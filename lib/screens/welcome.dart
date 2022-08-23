@@ -1,10 +1,14 @@
 import 'dart:io';
 
+import 'package:auto_route/src/router/auto_router_x.dart';
+import 'package:bookshelf/navigation/autoroute.gr.dart';
 import 'package:bookshelf/navigation/delegate.dart';
+import 'package:bookshelf/navigation/paths.dart';
 import 'package:bookshelf/tracing/route_aware.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../main.dart';
 
 class WelcomeWidget extends StatelessWidget {
   const WelcomeWidget({Key? key}) : super(key: key);
@@ -24,9 +28,8 @@ class WelcomeWidget extends StatelessWidget {
               ),
               const Divider(),
               ElevatedButton(
-                onPressed: (Router.of(context).routerDelegate
-                        as BookshelfRouterDelegate)
-                    .gotoBooks,
+                onPressed: () =>
+                    context.router.navigate(const BooksScreenRoute()),
                 // onPressed: context.read<BookshelfRouterDelegate>().gotoBooks,
                 child: const Text(
                   "Go",

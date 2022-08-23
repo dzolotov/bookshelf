@@ -1,20 +1,17 @@
 import 'dart:io';
 
-import 'package:bookshelf/navigation/provider.dart';
+import 'package:bookshelf/navigation/autoroute.gr.dart';
 import 'package:logger/logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'navigation/delegate.dart';
-import 'navigation/parser.dart';
-
 final logger = Logger();
 
 void main() {
   // setUrlStrategy(PathUrlStrategy());
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class NavigationStateDTO {
@@ -33,7 +30,9 @@ class NavigationStateDTO {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
+
+  final _appRouter = AppRouter();
 
   @override
   Widget build(BuildContext context) {
@@ -44,17 +43,16 @@ class MyApp extends StatelessWidget {
           ? Builder(
               builder: (context) {
                 return MaterialApp.router(
-                  routerDelegate: BookshelfRouterDelegate(),
-                  routeInformationParser: BooksShelfRouteInformationParser(),
-                  routeInformationProvider: DebugRouteInformationProvider(),
+                  routerDelegate: _appRouter.delegate(),
+                  routeInformationParser: _appRouter.defaultRouteParser(),
                 );
               },
             )
           : Builder(
               builder: (context) {
                 return CupertinoApp.router(
-                  routerDelegate: BookshelfRouterDelegate(),
-                  routeInformationParser: BooksShelfRouteInformationParser(),
+                  routerDelegate: _appRouter.delegate(),
+                  routeInformationParser: _appRouter.defaultRouteParser(),
                 );
               },
             ),
