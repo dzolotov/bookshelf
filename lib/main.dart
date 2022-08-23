@@ -55,6 +55,7 @@ class MyApp extends StatelessWidget {
                 return CupertinoApp.router(
                   routerDelegate: BookshelfRouterDelegate(),
                   routeInformationParser: BooksShelfRouteInformationParser(),
+                  routeInformationProvider: DebugRouteInformationProvider(),
                 );
               },
             ),
