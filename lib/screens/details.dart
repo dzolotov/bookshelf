@@ -59,15 +59,13 @@ class _DetailsPageState extends State<DetailsPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       TextButton(
-                        onPressed: () {
-                          context.read<NavigationController>().pop(true);
-                        },
+                        onPressed: () =>
+                            context.read<NavigationController>().pop(true),
                         child: const Text('OK'),
                       ),
                       TextButton(
-                        onPressed: () {
-                          context.read<NavigationController>().pop(false);
-                        },
+                        onPressed: () =>
+                            context.read<NavigationController>().pop(false),
                         child: const Text('Cancel'),
                       ),
                     ],
@@ -175,37 +173,38 @@ class DetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final book = getBook(bookId.id);
     return FutureBuilder<Book>(
-        future: book,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return kIsWeb || Platform.isAndroid
-                ? const Scaffold(
-                    body: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                : const CupertinoPageScaffold(
-                    child: Center(
-                      child: CupertinoActivityIndicator(),
-                    ),
-                  );
-          }
+      future: book,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
           return kIsWeb || Platform.isAndroid
-              ? Scaffold(
-                  appBar: AppBar(title: Text(snapshot.requireData.title)),
-                  body: DetailsPage(
-                    book: snapshot.requireData,
+              ? const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
                   ),
                 )
-              : CupertinoPageScaffold(
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  navigationBar: CupertinoNavigationBar(
-                    middle: Text(snapshot.requireData.title),
-                  ),
-                  child: DetailsPage(
-                    book: snapshot.requireData,
+              : const CupertinoPageScaffold(
+                  child: Center(
+                    child: CupertinoActivityIndicator(),
                   ),
                 );
-        });
+        }
+        return kIsWeb || Platform.isAndroid
+            ? Scaffold(
+                appBar: AppBar(title: Text(snapshot.requireData.title)),
+                body: DetailsPage(
+                  book: snapshot.requireData,
+                ),
+              )
+            : CupertinoPageScaffold(
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                navigationBar: CupertinoNavigationBar(
+                  middle: Text(snapshot.requireData.title),
+                ),
+                child: DetailsPage(
+                  book: snapshot.requireData,
+                ),
+              );
+      },
+    );
   }
 }

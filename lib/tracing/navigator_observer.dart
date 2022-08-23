@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-class ShelfNavigatorObserver extends NavigatorObserver {
+class BookShelfNavigatorObserver extends NavigatorObserver {
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) async =>
       debugPrint("Did push $route over {$previousRoute}");

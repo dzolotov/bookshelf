@@ -1,21 +1,35 @@
 import 'dart:io';
 
-import 'package:bookshelf/screens/unknown.dart';
-import 'package:bookshelf/screens/welcome.dart';
+import 'package:bookshelf/navigation/provider.dart';
+import 'package:logger/logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'navigation/controller.dart';
-import 'navigation/models.dart';
-import 'navigation/routes.dart';
-import 'screens/books.dart';
-import 'screens/details.dart';
-import 'tracing/navigator_observer.dart';
+import 'navigation/delegate.dart';
+import 'navigation/parser.dart';
+
+final logger = Logger();
 
 void main() {
+  // setUrlStrategy(PathUrlStrategy());
   runApp(const MyApp());
+}
+
+class NavigationStateDTO {
+  bool welcome;
+  int? bookId;
+  NavigationStateDTO(this.welcome, this.bookId);
+  NavigationStateDTO.welcome()
+      : welcome = true,
+        bookId = null;
+  NavigationStateDTO.books()
+      : welcome = false,
+        bookId = null;
+  NavigationStateDTO.book(int id)
+      : welcome = false,
+        bookId = id;
 }
 
 class MyApp extends StatelessWidget {
@@ -23,60 +37,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final navigationController = NavigationController();
     final routeObserver = RouteObserver();
-    return Provider<NavigationController>.value(
-      value: navigationController,
-      child: Provider<RouteObserver>.value(
-        value: routeObserver,
-        child: kIsWeb || Platform.isAndroid
-            ? MaterialApp(
-                initialRoute: Routes.welcome,
-                onGenerateRoute: (settings) {
-                  switch (settings.name) {
-                    case Routes.welcome:
-                      return MaterialPageRoute(
-                          builder: (_) => const WelcomeScreen());
-                    case Routes.books:
-                      return MaterialPageRoute(
-                          builder: (_) => const BooksScreen());
-                    case Routes.details:
-                      return MaterialPageRoute(
-                          builder: (_) =>
-                              DetailsScreen(settings.arguments as BookId));
-                    default:
-                      return MaterialPageRoute(
-                          builder: (_) => UnknownPage(settings.name));
-                  }
-                },
-                navigatorKey: navigationController.key,
-              )
-            : CupertinoApp(
-                navigatorKey: navigationController.key,
-                navigatorObservers: [
-                  ShelfNavigatorObserver(),
-                  routeObserver,
-                ],
-                initialRoute: Routes.welcome,
-                onGenerateRoute: (settings) {
-                  switch (settings.name) {
-                    case Routes.welcome:
-                      return MaterialPageRoute(
-                          builder: (_) => const WelcomeScreen());
-                    case Routes.books:
-                      return MaterialPageRoute(
-                          builder: (_) => const BooksScreen());
-                    case Routes.details:
-                      return MaterialPageRoute(
-                          builder: (_) =>
-                              DetailsScreen(settings.arguments as BookId));
-                    default:
-                      return MaterialPageRoute(
-                          builder: (_) => UnknownPage(settings.name));
-                  }
-                },
-              ),
-      ),
+    return Provider<RouteObserver>.value(
+      value: routeObserver,
+      child: kIsWeb || Platform.isAndroid
+          ? Builder(
+              builder: (context) {
+                return MaterialApp.router(
+                  routerDelegate: BookshelfRouterDelegate(),
+                  routeInformationParser: BooksShelfRouteInformationParser(),
+                  routeInformationProvider: DebugRouteInformationProvider(),
+                );
+              },
+            )
+          : Builder(
+              builder: (context) {
+                return CupertinoApp.router(
+                  routerDelegate: BookshelfRouterDelegate(),
+                  routeInformationParser: BooksShelfRouteInformationParser(),
+                );
+              },
+            ),
     );
   }
 }

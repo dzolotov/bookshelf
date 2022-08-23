@@ -1,16 +1,13 @@
 import 'dart:io';
 
-import 'package:bookshelf/navigation/controller.dart';
+import 'package:bookshelf/navigation/delegate.dart';
 import 'package:bookshelf/tracing/route_aware.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../domain/data/books.dart';
 import '../domain/models/book.dart';
-import '../navigation/models.dart';
-import '../navigation/routes.dart';
 
 const useDrawer = false;
 const useAndroidBottomNavBar = false;
@@ -42,6 +39,7 @@ class _BooksPageState extends State<BooksPage> {
   @override
   void didUpdateWidget(covariant BooksPage oldWidget) {
     super.didUpdateWidget(oldWidget);
+    //replace with actual state management
     if (oldWidget != widget || oldWidget.filter != widget.filter) {
       books = getBooks(widget.filter);
     }
@@ -50,38 +48,39 @@ class _BooksPageState extends State<BooksPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Book>>(
-        future: books,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return kIsWeb || Platform.isAndroid
-                ? const Scaffold(
-                    body: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                : const CupertinoPageScaffold(
-                    child: Center(child: CupertinoActivityIndicator()));
-          }
-          final data = snapshot.requireData;
-          return SafeArea(
-            child: ListView.builder(
-              itemCount: data.length,
-              itemBuilder: (context, index) => Material(
-                child: ListTile(
-                  leading: data[index].icon,
-                  title: Text(data[index].title),
-                  onTap: () {
-                    final arguments = BookId(data[index].id);
-                    context
-                        .read<NavigationController>()
-                        .navigateTo(Routes.details, arguments: arguments);
-                    //pass args to book details navigation target
-                  },
-                ),
+      future: books,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return kIsWeb || Platform.isAndroid
+              ? const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              : const CupertinoPageScaffold(
+                  child: Center(child: CupertinoActivityIndicator()));
+        }
+        final data = snapshot.requireData;
+        return SafeArea(
+          child: ListView.builder(
+            itemCount: data.length,
+            itemBuilder: (context, index) => Material(
+              child: ListTile(
+                leading: data[index].icon,
+                title: Text(data[index].title),
+                onTap: () {
+                  (Router.of(context).routerDelegate as BookshelfRouterDelegate)
+                      .gotoBook(data[index].id);
+                  // context
+                  //     .read<BookshelfRouterDelegate>()
+                  //     .gotoBook(data[index].id);
+                },
               ),
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -95,31 +94,6 @@ class BooksScreen extends StatefulWidget {
 class _BooksScreenState extends ObservedState<BooksScreen> {
   @override
   String get stateName => 'Books';
-
-  @override
-  void initState() {
-    super.initState();
-    //или after_layout package
-    WidgetsBinding.instance!.endOfFrame.then((value) {
-      context
-          .read<RouteObserver>()
-          .subscribe(this, ModalRoute.of(context) as PageRoute);
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    context.read<RouteObserver>().unsubscribe(this);
-  }
-
-  @override
-  void didPopNext() {
-    super.didPopNext();
-    //вернулись на страницу - обновимся, чтобы отобразить удаление книги
-    debugPrint('Refresh books');
-    setState(() {});
-  }
 
   int _currentPage = 3;
 

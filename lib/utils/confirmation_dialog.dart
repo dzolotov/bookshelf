@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:bookshelf/navigation/controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/src/provider.dart';
+import 'package:provider/provider.dart';
 
 extension DialogExt on BuildContext {
   Future<bool?> showConfirmationDialog(

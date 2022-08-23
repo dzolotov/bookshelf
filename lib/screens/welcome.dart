@@ -1,24 +1,22 @@
 import 'dart:io';
 
-import 'package:bookshelf/navigation/controller.dart';
-import 'package:bookshelf/navigation/routes.dart';
+import 'package:bookshelf/navigation/delegate.dart';
 import 'package:bookshelf/tracing/route_aware.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-class WelcomePage extends StatelessWidget {
-  const WelcomePage({Key? key}) : super(key: key);
+class WelcomeWidget extends StatelessWidget {
+  const WelcomeWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Container(
         color: Colors.cyan,
         child: Center(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
               const Text(
                 "Welcome to bookshelf",
                 style: TextStyle(fontSize: 42, color: Colors.white),
@@ -26,20 +24,25 @@ class WelcomePage extends StatelessWidget {
               ),
               const Divider(),
               ElevatedButton(
-                onPressed: () => context
-                    .read<NavigationController>()
-                    .navigateTo(Routes.books),
+                onPressed: (Router.of(context).routerDelegate
+                        as BookshelfRouterDelegate)
+                    .gotoBooks,
+                // onPressed: context.read<BookshelfRouterDelegate>().gotoBooks,
                 child: const Text(
                   "Go",
                   style: TextStyle(fontSize: 28),
                 ),
               )
-            ])),
+            ],
+          ),
+        ),
       );
 }
 
 class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({Key? key}) : super(key: key);
+  const WelcomeScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
@@ -50,25 +53,9 @@ class _WelcomeScreenState extends ObservedState<WelcomeScreen> {
   String get stateName => "WelcomePage";
 
   @override
-  void initState() {
-    super.initState();
-    //или after_layout package
-    WidgetsBinding.instance!.endOfFrame.then((value) {
-      context
-          .read<RouteObserver>()
-          .subscribe(this, ModalRoute.of(context) as PageRoute);
-    });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) => kIsWeb || Platform.isAndroid
       ? const Scaffold(
-          body: WelcomePage(),
+          body: WelcomeWidget(),
         )
-      : const CupertinoPageScaffold(child: WelcomePage());
+      : const CupertinoPageScaffold(child: WelcomeWidget());
 }
