@@ -45,8 +45,11 @@ class StackedRouterDelegate extends RouterDelegate
   @override
   get currentConfiguration => super.currentConfiguration;
 
+  //внимание - не возвращать GlobalKey() из геттера, чтобы не получить пересоздание навигатора!
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey();
+
   @override
-  GlobalKey<NavigatorState>? get navigatorKey => GlobalKey();
+  GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
 
   @override
   Future<void> setNewRoutePath(configuration) {
@@ -115,7 +118,6 @@ class BookshelfRouterDelegate extends RouterDelegate<NavigationStateDTO>
   @override
   Widget build(BuildContext context) => Navigator(
         onPopPage: (route, result) => route.didPop(result),
-        transitionDelegate: delegate,
         key: navigatorKey,
         pages: [
           if (state.isWelcome)
