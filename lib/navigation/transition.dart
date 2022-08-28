@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart';
 
-import '../main.dart';
-
-class BookshelfTransitionDelegate extends TransitionDelegate {
+class BookshelfTransitionDelegate extends DefaultTransitionDelegate {
+  const BookshelfTransitionDelegate() : super();
   @override
   Iterable<RouteTransitionRecord> resolve(
       {required List<RouteTransitionRecord> newPageRouteHistory,
@@ -10,17 +9,11 @@ class BookshelfTransitionDelegate extends TransitionDelegate {
           locationToExitingPageRoute,
       required Map<RouteTransitionRecord?, List<RouteTransitionRecord>>
           pageRouteToPagelessRoutes}) {
-    logger.i('Calling transition delegate');
-    for (var element in newPageRouteHistory) {
-      if (element.isWaitingForEnteringDecision) {
-        logger.i('Element $element is marked for push');
-        element.markForPush();
-      }
-      if (element.isWaitingForExitingDecision) {
-        // print('Element $element is marked for pop');
-        element.markForPop();
-      }
-    }
-    return newPageRouteHistory;
+    final results = super.resolve(
+      newPageRouteHistory: newPageRouteHistory,
+      locationToExitingPageRoute: locationToExitingPageRoute,
+      pageRouteToPagelessRoutes: pageRouteToPagelessRoutes,
+    );
+    return results;
   }
 }
