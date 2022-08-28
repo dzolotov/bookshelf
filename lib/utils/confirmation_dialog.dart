@@ -1,33 +1,35 @@
 import 'dart:io';
 
-import 'package:bookshelf/navigation/controller.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
+import '../navigation/delegate.dart';
 
 extension DialogExt on BuildContext {
   Future<bool?> showConfirmationDialog(
     Widget title,
     Widget content,
   ) async {
-    final controller = read<NavigationController>();
-    if (Platform.isIOS) {
-      return controller.pushDialog<bool?>(CupertinoDialogRoute(
+    if (!kIsWeb && Platform.isIOS) {
+      return Navigator.of(this).push<bool?>(CupertinoDialogRoute(
           builder: (_) => CupertinoAlertDialog(
                 title: title,
                 content: content,
                 actions: [
                   CupertinoButton(
-                      child: const Text('OK'),
-                      onPressed: () => read<NavigationController>().pop(true)),
+                    child: const Text('OK'),
+                    onPressed: () => Navigator.of(this).pop(true),
+                  ),
                   CupertinoButton(
-                      child: const Text('Cancel'),
-                      onPressed: () => read<NavigationController>().pop(false)),
+                    child: const Text('Cancel'),
+                    onPressed: () => Navigator.of(this).pop(false),
+                  ),
                 ],
               ),
           context: this));
     } else {
-      return controller.pushDialog<bool?>(
+      return Navigator.of(this).push<bool?>(
         DialogRoute(
           context: this,
           builder: (_) => AlertDialog(
@@ -35,11 +37,13 @@ extension DialogExt on BuildContext {
             content: content,
             actions: [
               TextButton(
-                  child: const Text('OK'),
-                  onPressed: () => read<NavigationController>().pop(true)),
+                child: const Text('OK'),
+                onPressed: () => Navigator.of(this).pop(true),
+              ),
               TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () => read<NavigationController>().pop(false)),
+                child: const Text('Cancel'),
+                onPressed: () => Navigator.of(this).pop(false),
+              ),
             ],
           ),
         ),

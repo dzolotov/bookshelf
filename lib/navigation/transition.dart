@@ -10,17 +10,21 @@ class BookshelfTransitionDelegate extends TransitionDelegate {
           locationToExitingPageRoute,
       required Map<RouteTransitionRecord?, List<RouteTransitionRecord>>
           pageRouteToPagelessRoutes}) {
+    print('Resolving');
     logger.i('Calling transition delegate');
+    List<RouteTransitionRecord> newHistory = [];
     for (var element in newPageRouteHistory) {
       if (element.isWaitingForEnteringDecision) {
         logger.i('Element $element is marked for push');
         element.markForPush();
+        newHistory.add(element);
       }
       if (element.isWaitingForExitingDecision) {
-        // print('Element $element is marked for pop');
+        logger.i('Element $element is marked for pop');
         element.markForPop();
+        newHistory.add(element);
       }
     }
-    return newPageRouteHistory;
+    return newHistory;
   }
 }

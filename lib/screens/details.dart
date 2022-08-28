@@ -1,11 +1,10 @@
 import 'dart:io';
 
-import 'package:bookshelf/navigation/controller.dart';
+import 'package:bookshelf/navigation/delegate.dart';
 import 'package:bookshelf/utils/confirmation_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../domain/data/books.dart';
 import '../domain/models/book.dart';
@@ -35,19 +34,19 @@ class _DetailsPageState extends State<DetailsPage> {
       onWillPop: () async {
         if (!wasChanges) return true;
         if (modalMode) {
-          final result = Platform.isIOS
+          final result = !kIsWeb && Platform.isIOS
               ? await showCupertinoModalPopup(
                   context: context,
                   builder: (context) => CupertinoActionSheet(
                     actions: [
                       CupertinoActionSheetAction(
                           onPressed: () {
-                            context.read<NavigationController>().pop(true);
+                            Navigator.of(context).pop(true);
                           },
                           child: const Text("OK")),
                       CupertinoActionSheetAction(
                           onPressed: () {
-                            context.read<NavigationController>().pop(false);
+                            Navigator.of(context).pop(false);
                           },
                           child: const Text("Cancel"))
                     ],
@@ -59,13 +58,11 @@ class _DetailsPageState extends State<DetailsPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       TextButton(
-                        onPressed: () =>
-                            context.read<NavigationController>().pop(true),
+                        onPressed: () => Navigator.of(context).pop(true),
                         child: const Text('OK'),
                       ),
                       TextButton(
-                        onPressed: () =>
-                            context.read<NavigationController>().pop(false),
+                        onPressed: () => Navigator.of(context).pop(false),
                         child: const Text('Cancel'),
                       ),
                     ],
@@ -101,9 +98,9 @@ class _DetailsPageState extends State<DetailsPage> {
                   );
                   if (result == true) {
                     removeBook(book.id);
-                    context
-                        .read<NavigationController>()
-                        .pop(); //перейти в список
+                    (Router.of(context).routerDelegate
+                            as BookshelfRouterDelegate)
+                        .gotoBooks();
                   }
                 },
               ),

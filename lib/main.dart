@@ -13,7 +13,6 @@ import 'navigation/parser.dart';
 final logger = Logger();
 
 void main() {
-  // setUrlStrategy(PathUrlStrategy());
   runApp(const MyApp());
 }
 
@@ -47,6 +46,12 @@ class MyApp extends StatelessWidget {
                   routerDelegate: BookshelfRouterDelegate(),
                   routeInformationParser: BooksShelfRouteInformationParser(),
                   routeInformationProvider: DebugRouteInformationProvider(),
+                  theme: Theme.of(context).copyWith(
+                      pageTransitionsTheme:
+                          const PageTransitionsTheme(builders: {
+                    TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+                    TargetPlatform.iOS: OpenUpwardsPageTransitionsBuilder(),
+                  })),
                 );
               },
             )

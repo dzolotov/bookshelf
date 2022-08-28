@@ -71,9 +71,6 @@ class _BooksPageState extends State<BooksPage> {
                 onTap: () {
                   (Router.of(context).routerDelegate as BookshelfRouterDelegate)
                       .gotoBook(data[index].id);
-                  // context
-                  //     .read<BookshelfRouterDelegate>()
-                  //     .gotoBook(data[index].id);
                 },
               ),
             ),

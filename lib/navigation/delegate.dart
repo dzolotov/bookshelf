@@ -54,6 +54,38 @@ class StackedRouterDelegate extends RouterDelegate
   }
 }
 
+class CustomAnimationPage<T> extends MaterialPage<T> {
+  const CustomAnimationPage({
+    required Widget child,
+    LocalKey? key,
+    String? name,
+    Object? arguments,
+  }) : super(
+          child: child,
+          key: key,
+          name: name,
+          arguments: arguments,
+        );
+
+  @override
+  Route<T> createRoute(BuildContext context) => PageRouteBuilder(
+        transitionDuration: const Duration(seconds: 2),
+        reverseTransitionDuration: const Duration(seconds: 2),
+        settings: this,
+        pageBuilder: (context, animation, secondAnimation) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        transitionsBuilder: (context, animation, secondAnimation, child) =>
+            FractionalTranslation(
+          translation: Offset(1 - animation.value, 1 - animation.value),
+          child: child,
+        ),
+      );
+}
+
 class BookshelfRouterDelegate extends RouterDelegate<NavigationStateDTO>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<NavigationStateDTO> {
   NavigationState state = NavigationState(true, null);
@@ -78,30 +110,30 @@ class BookshelfRouterDelegate extends RouterDelegate<NavigationStateDTO>
     notifyListeners();
   }
 
+  TransitionDelegate delegate = BookshelfTransitionDelegate();
+
   @override
-  Widget build(BuildContext context) {
-    return Navigator(
-      onPopPage: (route, result) => route.didPop(result),
-      transitionDelegate: BookshelfTransitionDelegate(),
-      key: navigatorKey,
-      pages: [
-        if (state.isWelcome)
-          const MaterialPage(
-            child: WelcomeScreen(),
-          ),
-        if (!state.isWelcome)
-          const MaterialPage(
-            child: BooksScreen(),
-          ),
-        if (state.bookId != null)
-          MaterialPage(
-            child: DetailsScreen(
-              BookId(state.bookId!),
+  Widget build(BuildContext context) => Navigator(
+        onPopPage: (route, result) => route.didPop(result),
+        transitionDelegate: delegate,
+        key: navigatorKey,
+        pages: [
+          if (state.isWelcome)
+            const CustomAnimationPage(
+              child: WelcomeScreen(),
             ),
-          ),
-      ],
-    );
-  }
+          if (!state.isWelcome)
+            const CustomAnimationPage(
+              child: BooksScreen(),
+            ),
+          if (state.bookId != null)
+            CustomAnimationPage(
+              child: DetailsScreen(
+                BookId(state.bookId!),
+              ),
+            ),
+        ],
+      );
 
   @override
   NavigationStateDTO? get currentConfiguration {
@@ -109,7 +141,7 @@ class BookshelfRouterDelegate extends RouterDelegate<NavigationStateDTO>
   }
 
   @override
-  GlobalKey<NavigatorState>? get navigatorKey => GlobalKey();
+  GlobalKey<NavigatorState> get navigatorKey => GlobalKey();
 
   @override
   Future<void> setNewRoutePath(NavigationStateDTO configuration) {
