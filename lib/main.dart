@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:bookshelf/navigation/provider.dart';
-import 'package:logger/logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'navigation/delegate.dart';

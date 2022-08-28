@@ -109,7 +109,7 @@ class BookshelfRouterDelegate extends RouterDelegate<NavigationStateDTO>
   }
 
   @override
-  GlobalKey<NavigatorState>? get navigatorKey => GlobalKey();
+  final GlobalKey<NavigatorState>? navigatorKey = GlobalKey();
 
   @override
   Future<void> setNewRoutePath(NavigationStateDTO configuration) {
