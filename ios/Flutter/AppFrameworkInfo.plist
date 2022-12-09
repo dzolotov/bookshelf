@@ -21,21 +21,6 @@
   <key>CFBundleVersion</key>
   <string>1.0</string>
   <key>MinimumOSVersion</key>
-  <string>9.0</string>
-  <key>FlutterDeepLinkingEnabled</key>
-  <true/>
-  <key>CFBundleURLTypes</key>
-  <array>
-      <dict>
-      <key>CFBundleTypeRole</key>
-      <string>Editor</string>
-      <key>CFBundleURLName</key>
-      <string>example.yandex.ru</string>
-      <key>CFBundleURLSchemes</key>
-      <array>
-      <string>customscheme</string>
-      </array>
-      </dict>
-  </array>
+  <string>11.0</string>
 </dict>
 </plist>
