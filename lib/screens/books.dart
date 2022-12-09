@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bookshelf/main.dart';
 import 'package:bookshelf/navigation/controller.dart';
 import 'package:bookshelf/tracing/route_aware.dart';
 import 'package:flutter/cupertino.dart';
@@ -70,13 +71,9 @@ class _BooksPageState extends State<BooksPage> {
                 child: ListTile(
                   leading: data[index].icon,
                   title: Text(data[index].title),
-                  onTap: () {
-                    final arguments = BookId(data[index].id);
-                    context
-                        .read<NavigationController>()
-                        .navigateTo(Routes.details, arguments: arguments);
-                    //pass args to book details navigation target
-                  },
+                  onTap: () => (Router.of(context).routerDelegate
+                          as BookshelfRouterDelegate)
+                      .gotoBook(data[index].id),
                 ),
               ),
             ),
@@ -92,34 +89,9 @@ class BooksScreen extends StatefulWidget {
   State<BooksScreen> createState() => _BooksScreenState();
 }
 
-class _BooksScreenState extends ObservedState<BooksScreen> {
+class _BooksScreenState extends State<BooksScreen> {
   @override
   String get stateName => 'Books';
-
-  @override
-  void initState() {
-    super.initState();
-    //или after_layout package
-    WidgetsBinding.instance!.endOfFrame.then((value) {
-      context
-          .read<RouteObserver>()
-          .subscribe(this, ModalRoute.of(context) as PageRoute);
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    context.read<RouteObserver>().unsubscribe(this);
-  }
-
-  @override
-  void didPopNext() {
-    super.didPopNext();
-    //вернулись на страницу - обновимся, чтобы отобразить удаление книги
-    debugPrint('Refresh books');
-    setState(() {});
-  }
 
   int _currentPage = 3;
 

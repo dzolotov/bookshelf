@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../main.dart';
+
 class WelcomePage extends StatelessWidget {
   const WelcomePage({Key? key}) : super(key: key);
 
@@ -26,9 +28,7 @@ class WelcomePage extends StatelessWidget {
               ),
               const Divider(),
               ElevatedButton(
-                onPressed: () => context
-                    .read<NavigationController>()
-                    .navigateTo(Routes.books),
+                onPressed: () => (Router.of(context).routerDelegate as BookshelfRouterDelegate).gotoBooks(),
                 child: const Text(
                   "Go",
                   style: TextStyle(fontSize: 28),
@@ -48,17 +48,6 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends ObservedState<WelcomeScreen> {
   @override
   String get stateName => "WelcomePage";
-
-  @override
-  void initState() {
-    super.initState();
-    //или after_layout package
-    WidgetsBinding.instance!.endOfFrame.then((value) {
-      context
-          .read<RouteObserver>()
-          .subscribe(this, ModalRoute.of(context) as PageRoute);
-    });
-  }
 
   @override
   void didChangeDependencies() {
