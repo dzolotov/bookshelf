@@ -49,24 +49,25 @@ class BookshelfRouterDelegate extends RouterDelegate<NavigationStateDTO>
   @override
   Widget build(BuildContext context) {
     return Navigator(
-        onPopPage: (route, result) => route.didPop(result),
-        key: navigatorKey,
-        pages: [
-          if (state.isWelcome)
-            const MaterialPage(
-              child: WelcomeScreen(),
+      onPopPage: (route, result) => route.didPop(result),
+      key: navigatorKey,
+      pages: [
+        if (state.isWelcome)
+          const MaterialPage(
+            child: WelcomeScreen(),
+          ),
+        if (!state.isWelcome)
+          const MaterialPage(
+            child: BooksScreen(),
+          ),
+        if (state.bookId != null)
+          MaterialPage(
+            child: DetailsScreen(
+              BookId(state.bookId!),
             ),
-          if (!state.isWelcome)
-            const MaterialPage(
-              child: BooksScreen(),
-            ),
-          if (state.bookId != null)
-            MaterialPage(
-              child: DetailsScreen(
-                BookId(state.bookId!),
-              ),
-            )
-        ]);
+          )
+      ],
+    );
   }
 
   @override
@@ -82,40 +83,6 @@ class BookshelfRouterDelegate extends RouterDelegate<NavigationStateDTO>
     state.bookId = configuration.bookId;
     state.isWelcome = configuration.welcome;
     return Future.value();
-  }
-}
-
-class BooksShelfRouteInformationParser
-    extends RouteInformationParser<NavigationStateDTO> {
-  @override
-  Future<NavigationStateDTO> parseRouteInformation(
-      RouteInformation routeInformation) {
-    print("Get new route ${routeInformation.location}");
-    final uri = Uri.parse(routeInformation.location ?? '');
-    if (uri.pathSegments.isEmpty) {
-      return Future.value(NavigationStateDTO.welcome());
-    }
-    switch (uri.pathSegments[0]) {
-      case Paths.books:
-        return Future.value(NavigationStateDTO.books());
-      case Paths.book:
-        return Future.value(
-            NavigationStateDTO.book(int.parse(uri.pathSegments[1])));
-      default:
-        return Future.value(NavigationStateDTO.welcome());
-    }
-  }
-
-  @override
-  RouteInformation? restoreRouteInformation(NavigationStateDTO configuration) {
-    print('Restoring route information from $configuration');
-    if (configuration.welcome) {
-      return const RouteInformation(location: Paths.welcome);
-    }
-    if (configuration.bookId == null) {
-      return const RouteInformation(location: "/${Paths.books}");
-    }
-    return RouteInformation(location: "/${Paths.book}/${configuration.bookId}");
   }
 }
 
@@ -199,11 +166,9 @@ class MyApp extends StatelessWidget {
       value: navigationController,
       child: kIsWeb || Platform.isAndroid
           ? MaterialApp.router(
-              routeInformationParser: BooksShelfRouteInformationParser(),
               routerDelegate: BookshelfRouterDelegate(),
             )
           : CupertinoApp.router(
-              routeInformationParser: BooksShelfRouteInformationParser(),
               routerDelegate: BookshelfRouterDelegate(),
             ),
     );
