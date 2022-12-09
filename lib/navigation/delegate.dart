@@ -81,7 +81,15 @@ class BookshelfRouterDelegate extends RouterDelegate<NavigationStateDTO>
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      onPopPage: (route, result) => route.didPop(result),
+      onPopPage: (route, result) {
+        if (!route.didPop(result)) {
+          return false;
+        }
+        if (state.bookId!=null && state.isWelcome==false) {
+          gotoBooks();
+        }
+        return true;
+      },
       transitionDelegate: BookshelfTransitionDelegate(),
       key: navigatorKey,
       pages: [
