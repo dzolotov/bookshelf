@@ -4,6 +4,7 @@ import 'package:bookshelf/navigation/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,7 @@ final logger = Logger();
 
 void main() {
   // setUrlStrategy(PathUrlStrategy());
+  setUrlStrategy(const HashUrlStrategy());
   runApp(const MyApp());
 }
 

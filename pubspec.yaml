@@ -11,8 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # flutter_web_plugins:
-    # sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
   provider: ^6.0.0
   cupertino_icons: ^1.0.0
   logger: any
