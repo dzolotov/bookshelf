@@ -22,6 +22,29 @@ class NavigationState {
   String toString() => "Welcome: $isWelcome, book: $bookId";
 }
 
+class BookshelfTransitionDelegate extends DefaultTransitionDelegate {
+  const BookshelfTransitionDelegate() : super();
+
+  @override
+  Iterable<RouteTransitionRecord> resolve(
+      {required List<RouteTransitionRecord> newPageRouteHistory,
+      required Map<RouteTransitionRecord?, RouteTransitionRecord>
+          locationToExitingPageRoute,
+      required Map<RouteTransitionRecord?, List<RouteTransitionRecord>>
+          pageRouteToPagelessRoutes}) {
+    final results = super.resolve(
+      newPageRouteHistory: newPageRouteHistory,
+      locationToExitingPageRoute: locationToExitingPageRoute,
+      pageRouteToPagelessRoutes: pageRouteToPagelessRoutes,
+    );
+    for (final r in results) {
+      print(
+          "Entering: ${r.isWaitingForEnteringDecision}, Exit: ${r.isWaitingForExitingDecision}, Route: ${r.route}");
+    }
+    return results;
+  }
+}
+
 class BookshelfRouterDelegate extends RouterDelegate<NavigationStateDTO>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<NavigationStateDTO> {
   NavigationState state = NavigationState(true, null);
@@ -50,6 +73,7 @@ class BookshelfRouterDelegate extends RouterDelegate<NavigationStateDTO>
   Widget build(BuildContext context) {
     return Navigator(
         onPopPage: (route, result) => route.didPop(result),
+        transitionDelegate: const BookshelfTransitionDelegate(),
         key: navigatorKey,
         pages: [
           if (state.isWelcome)
@@ -189,6 +213,25 @@ void main() {
   ));
 }
 
+class DebugRouteInformationProvider extends PlatformRouteInformationProvider {
+  DebugRouteInformationProvider()
+      : super(
+            initialRouteInformation: RouteInformation(
+                location: PlatformDispatcher.instance.defaultRouteName));
+
+  @override
+  Future<bool> didPushRoute(String route) {
+    print('Platform reports $route');
+    return super.didPushRoute(route);
+  }
+
+  @override
+  Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
+    print('Platform reports routeinformation: $routeInformation');
+    return super.didPushRouteInformation(routeInformation);
+  }
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -201,10 +244,12 @@ class MyApp extends StatelessWidget {
           ? MaterialApp.router(
               routeInformationParser: BooksShelfRouteInformationParser(),
               routerDelegate: BookshelfRouterDelegate(),
+              routeInformationProvider: DebugRouteInformationProvider(),
             )
           : CupertinoApp.router(
               routeInformationParser: BooksShelfRouteInformationParser(),
               routerDelegate: BookshelfRouterDelegate(),
+              routeInformationProvider: DebugRouteInformationProvider(),
             ),
     );
   }
