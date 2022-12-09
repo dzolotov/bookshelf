@@ -219,6 +219,14 @@ class DebugRouteInformationProvider extends PlatformRouteInformationProvider {
             initialRouteInformation: RouteInformation(
                 location: PlatformDispatcher.instance.defaultRouteName));
 
+
+  @override
+  void routerReportsNewRouteInformation(RouteInformation routeInformation,
+      {RouteInformationReportingType type =
+          RouteInformationReportingType.none}) {
+    print("Update from router: ${routeInformation.location}");
+  }
+
   @override
   Future<bool> didPushRoute(String route) {
     print('Platform reports $route');
@@ -245,7 +253,7 @@ class MyApp extends StatelessWidget {
               routeInformationParser: BooksShelfRouteInformationParser(),
               routerDelegate: BookshelfRouterDelegate(),
               routeInformationProvider: DebugRouteInformationProvider(),
-            )
+      )
           : CupertinoApp.router(
               routeInformationParser: BooksShelfRouteInformationParser(),
               routerDelegate: BookshelfRouterDelegate(),
